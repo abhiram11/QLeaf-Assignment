@@ -1,5 +1,5 @@
-// import { config } from "dotenv";
-// config();
+require("dotenv").config();
+// console.log(process.env);
 //install passport for auth
 
 // const express = require("express");
@@ -17,6 +17,13 @@
 // app.listen(PORT, () => console.log(`listening to port:${PORT}`));
 
 const axios = require("axios");
-const res = await axios
-  .get("www.google.com")
-  .then((response) => console.log(response));
+
+axios
+  .get(
+    `https://www.googleapis.com/youtube/v3/search?key=${process.env.YOUTUBE_API_KEY}&q=football&order=date&part=snippet&maxResults=10`
+  )
+  // .get("https://jsonplaceholder.typicode.com/users")
+  .then((res) => console.log(res.data))
+  .catch((err) => {
+    console.log("Error: ", err.message);
+  });
