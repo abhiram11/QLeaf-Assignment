@@ -4,7 +4,8 @@
   "description": "This repository contains the Backend Assignment of Youtube API, Database Integration, and Dockerization.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src"
   },
   "repository": {
     "type": "git",
@@ -23,8 +24,6 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "googleapis": "^110.0.0",
-    "mongoose": "^6.8.4",
-    "nodemon": "^2.0.20",
     "pg": "^8.8.0"
   }
 }
