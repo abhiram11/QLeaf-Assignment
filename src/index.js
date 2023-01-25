@@ -4,11 +4,11 @@ const axios = require("axios");
 require("dotenv").config();
 const cors = require("cors");
 const pool = require("./db"); // use sequelize as well
-const PORT = 3000;
+const PORT = 3001;
 
 // middleware
 app.use(cors()); // for frontend integration
-// app.use(express.json()); // allows us to enter request.body and get json data from frontend
+app.use(express.json()); // allows us to enter request.body and get json data from frontend
 
 // ROUTES
 
@@ -120,7 +120,7 @@ async function callYoutubeApi() {
     });
 }
 
-callYoutubeApi();
-setInterval(callYoutubeApi, 60000); //calling every 60 seconds
+// callYoutubeApi();
+// setInterval(callYoutubeApi, 60000); //calling every 60 seconds
 
 app.listen(PORT, () => console.log(`listening to port:${PORT}`));
