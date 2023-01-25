@@ -9,33 +9,32 @@ const pool = new Pool({
 
 module.exports = pool;
 
-/**
-const { Client } = require('pg');
+// check if database already created
 
-const client = new Client({
-    host: '127.0.0.1',
-    user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PSWD || 'password',
-    port: process.env.DB_PORT || 5432,
-});
+// const { Client } = require("pg");
 
-const createDatabase = async () => {
-    try {
-        await client.connect();                            // gets connection
-        await client.query('CREATE DATABASE my_database'); // sends queries
-        return true;
-    } catch (error) {
-        console.error(error.stack);
-        return false;
-    } finally {
-        await client.end();                                // closes connection
-    }
-};
+// const client = new Client({
+//   //   host: "127.0.0.1",
+//   user: "postgres",
+//   password: "1234",
+//   port: 5432,
+// });
 
-createDatabase().then((result) => {
-    if (result) {
-        console.log('Database created');
-    }
-});
- * 
- */
+// const createDatabase = async () => {
+//   try {
+//     await client.connect(); // gets connection
+//     await client.query("CREATE DATABASE youtubeapidata"); // sends queries
+//     return true;
+//   } catch (error) {
+//     console.log("Database youtubeapidata already created");
+//     return false;
+//   } finally {
+//     await client.end(); // closes connection
+//   }
+// };
+
+// createDatabase().then((result) => {
+//   if (result) {
+//     console.log("Database youtubeapidata created");
+//   }
+// });
