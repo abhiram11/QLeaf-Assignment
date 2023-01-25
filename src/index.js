@@ -116,11 +116,14 @@ async function callYoutubeApi() {
     })
     //   .then((res) => console.log(JSON.stringify(res.data)))
     .catch((err) => {
-      console.log("Error in Axios: ", err.message);
+      console.log(
+        "Error in Axios, Most probably Quota Exceeded: ",
+        err.message
+      );
     });
 }
 
-// callYoutubeApi();
-// setInterval(callYoutubeApi, 60000); //calling every 60 seconds
+callYoutubeApi();
+setInterval(callYoutubeApi, 60000); //calling every 60 seconds
 
 app.listen(PORT, () => console.log(`listening to port:${PORT}`));
