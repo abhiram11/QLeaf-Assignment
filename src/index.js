@@ -2,16 +2,19 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const cors = require("cors");
+const pool = require("./db");
 // const PORT = 3000;
 
 //middleware
 app.use(cors());
 app.use(express.json()); // allows us to enter request.body and get json data from frontend
 
-// app.get("/", (req, res) => res.status(200).send("Hello woorld from backend!"));
+//ROUTES
 
+// app.get("/", (req, res) => res.status(200).send("Hello woorld from backend!"));
 // app.listen(PORT, () => console.log(`listening to port:${PORT}`));
 
+// **********************
 const axios = require("axios");
 //await
 axios
@@ -23,16 +26,34 @@ axios
     // console.log("%j", res.data);
     let items = res.data.items;
     // console.log(items);
-    items.forEach((item) => {
+    console.log("Inserting item into DB");
+    items.forEach(async (item) => {
       //storing: videoId, title, description, publishedAt, thumbnails.default.url
-      console.log(
-        item.id.videoId,
-        item.snippet.title,
-        item.snippet.description,
-        item.snippet.publishedAt,
-        item.snippet.thumbnails.default.url, //can be replaced later to reduce storage cost sinceit's based on
-        "\n\n"
-      );
+      //   console.log(
+      //     item.id.videoId,
+      //     item.snippet.title,
+      //     item.snippet.description,
+      //     item.snippet.publishedAt,
+      //     item.snippet.thumbnails.default.url, //can be replaced later to reduce storage cost sinceit's based on
+      //     "\n\n"
+      //   );
+      const newYtData = await pool
+        .query(
+          "INSERT INTO ytdata (video_id, title, description, published_at, thumbnails_url) VALUES ($1, $2, $3, $4, $5)", // RETURNING * or title
+          [
+            item.id.videoId,
+            item.snippet.title,
+            item.snippet.description,
+            item.snippet.publishedAt,
+            item.snippet.thumbnails.default.url,
+          ]
+        )
+        .then(() => {
+          console.log("Successfully added the values!");
+        })
+        .catch((err) => {
+          console.log("Error during inserting in DB:", err);
+        });
     });
   })
   //   .then((res) => console.log(JSON.stringify(res.data)))
@@ -40,7 +61,12 @@ axios
     console.log("Error: ", err.message);
   });
 
-console.log("hi");
+// **********************
+
+pool.query("SELECT * FROM ytdata").then((data) => {
+  console.log(data);
+});
+
 //  Video title, description, publishing datetime, thumbnails URLs and any other fields you require
 // PostgreSQL for any application that might grow to enterprise scope, with complex queries and frequent write operations
 // // if the request API costs the same QUOTA for maxResults 10 to 50, then call them all at once! Use refreshToken, etc.
