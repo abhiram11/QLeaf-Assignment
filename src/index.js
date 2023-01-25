@@ -1,12 +1,13 @@
 const express = require("express");
 const app = express();
+const axios = require("axios");
 require("dotenv").config();
 const cors = require("cors");
 const pool = require("./db"); // use sequelize as well
 const PORT = 3000;
 
 //middleware
-app.use(cors());
+app.use(cors()); // for frontend integration
 app.use(express.json()); // allows us to enter request.body and get json data from frontend
 
 // check if database already created
@@ -82,51 +83,57 @@ app.get("/search/:search", async (req, res) => {
     console.error(err.message);
   }
 });
-// const axios = require("axios");
-// //await
-// axios
-//   .get(
-//     `https://www.googleapis.com/youtube/v3/search?key=${process.env.YOUTUBE_API_KEY}&q=football&order=date&part=snippet&maxResults=10`
-//   )
-//   // .get("https://jsonplaceholder.typicode.com/users")
-//   .then((res) => {
-//     // console.log("%j", res.data);
-//     let items = res.data.items;
-//     // console.log(items);
-//     console.log("Inserting item into DB");
-//     items.forEach(async (item) => {
-//       //storing: videoId, title, description, publishedAt, thumbnails.default.url
-//       //   console.log(
-//       //     item.id.videoId,
-//       //     item.snippet.title,
-//       //     item.snippet.description,
-//       //     item.snippet.publishedAt,
-//       //     item.snippet.thumbnails.default.url, //can be replaced later to reduce storage cost sinceit's based on
-//       //     "\n\n"
-//       //   );
-//       const newYtData = await pool
-//         .query(
-//           "INSERT INTO ytdata (video_id, title, description, published_at, thumbnails_url) VALUES ($1, $2, $3, $4, $5)", // RETURNING * or title
-//           [
-//             item.id.videoId,
-//             item.snippet.title,
-//             item.snippet.description,
-//             item.snippet.publishedAt,
-//             item.snippet.thumbnails.default.url,
-//           ]
-//         )
-//         .then(() => {
-//           console.log("Successfully added the values!");
-//         })
-//         .catch((err) => {
-//           console.log("Error during inserting in DB:", err);
-//         });
-//     });
-//   })
-//   //   .then((res) => console.log(JSON.stringify(res.data)))
-//   .catch((err) => {
-//     console.log("Error: ", err.message);
-//   });
+//await
+
+async function callYoutubeApi() {
+  // 2023-01-24T23:44:52Z
+  var date = new Date();
+  date.setMinutes(date.getMinutes() - 100);
+  date = date.toISOString();
+  date = date.slice(0, -5) + date.slice(-1, date.length);
+  console.log("\n\nDATE as INPUT:", date, "\n\n");
+
+  await axios
+    .get(
+      `https://www.googleapis.com/youtube/v3/search?key=${process.env.YOUTUBE_API_KEY}&q=football&order=date&part=snippet&maxResults=10&publishedAfter=${date}`
+    )
+    .then((res) => {
+      let items = res?.data?.items;
+      console.log("items:", items);
+      // console.log("Inserting item into DB");
+      if (items) {
+        items.forEach(async (item) => {
+          console.log(
+            `Video id: ${item.id.videoId} --- Published at: ${item.snippet.publishedAt}`
+          );
+          //storing: videoId, title, description, publishedAt, thumbnails.default.url
+          await pool
+            .query(
+              "INSERT INTO ytdata (video_id, title, description, published_at, thumbnails_url) VALUES ($1, $2, $3, $4, $5)", // RETURNING * or title
+              [
+                item.id.videoId,
+                item.snippet.title,
+                item.snippet.description,
+                item.snippet.publishedAt,
+                item.snippet.thumbnails.default.url,
+              ]
+            )
+            .then(() => {
+              console.log("Successfully added the values!");
+            })
+            .catch((err) => {
+              console.log("Error during inserting in DB:", err);
+            });
+        });
+      }
+    })
+    //   .then((res) => console.log(JSON.stringify(res.data)))
+    .catch((err) => {
+      console.log("Error: ", err.message);
+    });
+}
+
+// setInterval(callYoutubeApi, 10000); //calling every 10 seconds
 
 // **********************
 
@@ -162,5 +169,13 @@ app.get("/search/:search", async (req, res) => {
 // // https://www.googleapis.com/youtube/v3/search?key=AIzaSyCrwujD2kNWK-3y5XTpJSY6A49HjNSRF7c&q=football&order=date&part=snippet&maxResults=10
 // uninstall nodemon if installed
 // use multithreading for continuous  YT API Fetching and to work on our DB Calls synchronously
+
+// var date = new Date();
+// console.log("DATE:", date);
+// // date = date.slice(0, -5) + date.slice(-1, date.length);
+// // const date = "2023-01-25T17:48:51Z";
+// date.setMinutes(date.getMinutes() - 44);
+// date = date.toISOString();
+// console.log("1 Minute old DATE:", date);
 
 app.listen(PORT, () => console.log(`listening to port:${PORT}`));
