@@ -43,9 +43,10 @@ app.get("/vids/:page", async (req, res) => {
 app.get("/search/:search", async (req, res) => {
   try {
     const { search } = req.params;
+    let searchQuery = search.replace(" ", " | ");
     await pool
       .query(
-        `SELECT video_id, title, description FROM ytdata WHERE to_tsvector(title || ' ' || description) @@ to_tsquery('${search}')`
+        `SELECT video_id, title, description FROM ytdata WHERE to_tsvector(title || ' ' || description) @@ to_tsquery('${searchQuery}')`
         // "SELECT video_id, title, description FROM ytdata WHERE title LIKE '%NOTT%' OR description LIKE '%Disc%'"
       )
       .then((data) => res.status(200).send(JSON.stringify(data.rows)));
