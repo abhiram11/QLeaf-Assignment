@@ -25,7 +25,7 @@ app.use(express.json()); // allows us to enter request.body and get json data fr
 //     await client.query("CREATE DATABASE youtubeapidata"); // sends queries
 //     return true;
 //   } catch (error) {
-//     console.error(error.stack);
+//     console.log("Database youtubeapidata already created");
 //     return false;
 //   } finally {
 //     await client.end(); // closes connection
