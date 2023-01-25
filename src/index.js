@@ -3,7 +3,7 @@ const app = express();
 require("dotenv").config();
 const cors = require("cors");
 const pool = require("./db");
-// const PORT = 3000;
+const PORT = 3000;
 
 //middleware
 app.use(cors());
@@ -11,10 +11,48 @@ app.use(express.json()); // allows us to enter request.body and get json data fr
 
 //ROUTES
 
-// app.get("/", (req, res) => res.status(200).send("Hello woorld from backend!"));
-// app.listen(PORT, () => console.log(`listening to port:${PORT}`));
+app.get("/", (req, res) => res.status(200).send("Hello woorld from backend!"));
 
 // ********************** add latest publishedAfter
+
+app.get("/vids/:page", async (req, res) => {
+  const { page } = req.params;
+  const pageSize = 5;
+  console.log("PAGE:", page);
+  try {
+    await pool
+      .query(
+        `SELECT * FROM ytdata ORDER BY published_at DESC OFFSET ${
+          (page - 1) * pageSize
+        } LIMIT ${pageSize}`
+      )
+      .then((data) => {
+        // let items = data.rows;
+        // console.log(items);
+        // items.forEach((item) => {
+        //   console.log(item.id, item.published_at);
+        // });
+
+        res.status(200).send(JSON.stringify(data.rows));
+      });
+  } catch (err) {
+    console.error(err.message);
+  }
+});
+
+app.get("/search/:search", async (req, res) => {
+  try {
+    const { search } = req.params;
+    await pool
+      .query(
+        `SELECT video_id, title, description FROM ytdata WHERE to_tsvector(title || ' ' || description) @@ to_tsquery('${search}')`
+        // "SELECT video_id, title, description FROM ytdata WHERE title LIKE '%NOTT%' OR description LIKE '%Disc%'"
+      )
+      .then((data) => res.status(200).send(JSON.stringify(data.rows)));
+  } catch (err) {
+    console.error(err.message);
+  }
+});
 // const axios = require("axios");
 // //await
 // axios
@@ -65,18 +103,27 @@ app.use(express.json()); // allows us to enter request.body and get json data fr
 
 // **********************
 
-// pool.query("SELECT * FROM ytdata").then((data) => {
-//   console.log(data);
-// });
+// pool
+//   .query("SELECT * FROM ytdata ORDER BY published_at DESC OFFSET 1 LIMIT 5")
+//   .then((data) => {
+//     let items = data.rows;
+//     // console.log(items);
+//     items.forEach((item) => {
+//       console.log(item.id, item.published_at);
+//     });
+//   });
+
+// don't use offset, use estimates if possible, not use ORM
 
 // **********************
 // to_tsvector(yourQuery) breaks input into tokens, and to_tsquery(columnValues) does the full text query, ts = TextSearch
-pool
-  .query(
-    "SELECT video_id, title, description FROM ytdata WHERE to_tsvector(title || ' ' || description) @@ to_tsquery('Discord')"
-    // "SELECT video_id, title, description FROM ytdata WHERE title LIKE '%NOTT%' OR description LIKE '%Disc%'"
-  )
-  .then((data) => console.log("TSQUERY:", data));
+
+// pool
+//   .query(
+//     "SELECT video_id, title, description FROM ytdata WHERE to_tsvector(title || ' ' || description) @@ to_tsquery('football')"
+//     // "SELECT video_id, title, description FROM ytdata WHERE title LIKE '%NOTT%' OR description LIKE '%Disc%'"
+//   )
+//   .then((data) => console.log("TSQUERY:", data));
 
 // **********************
 
@@ -84,3 +131,7 @@ pool
 // PostgreSQL for any application that might grow to enterprise scope, with complex queries and frequent write operations
 // // if the request API costs the same QUOTA for maxResults 10 to 50, then call them all at once! Use refreshToken, etc.
 // // https://www.googleapis.com/youtube/v3/search?key=AIzaSyCrwujD2kNWK-3y5XTpJSY6A49HjNSRF7c&q=football&order=date&part=snippet&maxResults=10
+// uninstall nodemon if installed
+// use multithreading for continuous  YT API Fetching and to work on our DB Calls synchronously
+
+app.listen(PORT, () => console.log(`listening to port:${PORT}`));

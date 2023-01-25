@@ -14,3 +14,9 @@ CREATE TABLE ytdata(
 -- /l => list all db in postgres
 -- /c dbname => move inside db
 -- /dt => show table in db
+
+-- ALTER TABLE ytdata(
+--     ADD COLUMN document tsvector,
+-- );
+-- UPDATE ytdata;
+-- SET document
