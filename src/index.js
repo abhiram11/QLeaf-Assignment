@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 require("dotenv").config();
 const cors = require("cors");
-const pool = require("./db");
+const pool = require("./db"); // use sequelize as well
 const PORT = 3000;
 
 //middleware
