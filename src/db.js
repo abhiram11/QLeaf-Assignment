@@ -8,3 +8,34 @@ const pool = new Pool({
 });
 
 module.exports = pool;
+
+/**
+const { Client } = require('pg');
+
+const client = new Client({
+    host: '127.0.0.1',
+    user: 'postgres',
+    password: 'password',
+    port: 5432,
+});
+
+const createDatabase = async () => {
+    try {
+        await client.connect();                            // gets connection
+        await client.query('CREATE DATABASE my_database'); // sends queries
+        return true;
+    } catch (error) {
+        console.error(error.stack);
+        return false;
+    } finally {
+        await client.end();                                // closes connection
+    }
+};
+
+createDatabase().then((result) => {
+    if (result) {
+        console.log('Database created');
+    }
+});
+ * 
+ */
