@@ -14,58 +14,71 @@ app.use(express.json()); // allows us to enter request.body and get json data fr
 // app.get("/", (req, res) => res.status(200).send("Hello woorld from backend!"));
 // app.listen(PORT, () => console.log(`listening to port:${PORT}`));
 
+// ********************** add latest publishedAfter
+// const axios = require("axios");
+// //await
+// axios
+//   .get(
+//     `https://www.googleapis.com/youtube/v3/search?key=${process.env.YOUTUBE_API_KEY}&q=football&order=date&part=snippet&maxResults=10`
+//   )
+//   // .get("https://jsonplaceholder.typicode.com/users")
+//   .then((res) => {
+//     // console.log("%j", res.data);
+//     let items = res.data.items;
+//     // console.log(items);
+//     console.log("Inserting item into DB");
+//     items.forEach(async (item) => {
+//       //storing: videoId, title, description, publishedAt, thumbnails.default.url
+//       //   console.log(
+//       //     item.id.videoId,
+//       //     item.snippet.title,
+//       //     item.snippet.description,
+//       //     item.snippet.publishedAt,
+//       //     item.snippet.thumbnails.default.url, //can be replaced later to reduce storage cost sinceit's based on
+//       //     "\n\n"
+//       //   );
+//       const newYtData = await pool
+//         .query(
+//           "INSERT INTO ytdata (video_id, title, description, published_at, thumbnails_url) VALUES ($1, $2, $3, $4, $5)", // RETURNING * or title
+//           [
+//             item.id.videoId,
+//             item.snippet.title,
+//             item.snippet.description,
+//             item.snippet.publishedAt,
+//             item.snippet.thumbnails.default.url,
+//           ]
+//         )
+//         .then(() => {
+//           console.log("Successfully added the values!");
+//         })
+//         .catch((err) => {
+//           console.log("Error during inserting in DB:", err);
+//         });
+//     });
+//   })
+//   //   .then((res) => console.log(JSON.stringify(res.data)))
+//   .catch((err) => {
+//     console.log("Error: ", err.message);
+//   });
+
 // **********************
-const axios = require("axios");
-//await
-axios
-  .get(
-    `https://www.googleapis.com/youtube/v3/search?key=${process.env.YOUTUBE_API_KEY}&q=football&order=date&part=snippet&maxResults=10`
+
+// **********************
+
+// pool.query("SELECT * FROM ytdata").then((data) => {
+//   console.log(data);
+// });
+
+// **********************
+// to_tsvector(yourQuery) breaks input into tokens, and to_tsquery(columnValues) does the full text query, ts = TextSearch
+pool
+  .query(
+    "SELECT video_id, title, description FROM ytdata WHERE to_tsvector(title || ' ' || description) @@ to_tsquery('Discord')"
+    // "SELECT video_id, title, description FROM ytdata WHERE title LIKE '%NOTT%' OR description LIKE '%Disc%'"
   )
-  // .get("https://jsonplaceholder.typicode.com/users")
-  .then((res) => {
-    // console.log("%j", res.data);
-    let items = res.data.items;
-    // console.log(items);
-    console.log("Inserting item into DB");
-    items.forEach(async (item) => {
-      //storing: videoId, title, description, publishedAt, thumbnails.default.url
-      //   console.log(
-      //     item.id.videoId,
-      //     item.snippet.title,
-      //     item.snippet.description,
-      //     item.snippet.publishedAt,
-      //     item.snippet.thumbnails.default.url, //can be replaced later to reduce storage cost sinceit's based on
-      //     "\n\n"
-      //   );
-      const newYtData = await pool
-        .query(
-          "INSERT INTO ytdata (video_id, title, description, published_at, thumbnails_url) VALUES ($1, $2, $3, $4, $5)", // RETURNING * or title
-          [
-            item.id.videoId,
-            item.snippet.title,
-            item.snippet.description,
-            item.snippet.publishedAt,
-            item.snippet.thumbnails.default.url,
-          ]
-        )
-        .then(() => {
-          console.log("Successfully added the values!");
-        })
-        .catch((err) => {
-          console.log("Error during inserting in DB:", err);
-        });
-    });
-  })
-  //   .then((res) => console.log(JSON.stringify(res.data)))
-  .catch((err) => {
-    console.log("Error: ", err.message);
-  });
+  .then((data) => console.log("TSQUERY:", data));
 
 // **********************
-
-pool.query("SELECT * FROM ytdata").then((data) => {
-  console.log(data);
-});
 
 //  Video title, description, publishing datetime, thumbnails URLs and any other fields you require
 // PostgreSQL for any application that might grow to enterprise scope, with complex queries and frequent write operations
