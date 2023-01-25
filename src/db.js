@@ -23,10 +23,10 @@ module.exports = pool;
 // const createDatabase = async () => {
 //   try {
 //     await client.connect(); // gets connection
-//     await client.query("CREATE DATABASE youtubeapidata"); // sends queries
+//     await client.query("CREATE DATABASE youtubeapidata2"); // sends queries
 //     return true;
 //   } catch (error) {
-//     console.log("Database youtubeapidata already created");
+//     console.log("Database youtubeapidata2 already created");
 //     return false;
 //   } finally {
 //     await client.end(); // closes connection
@@ -35,6 +35,6 @@ module.exports = pool;
 
 // createDatabase().then((result) => {
 //   if (result) {
-//     console.log("Database youtubeapidata created");
+//     console.log("Database youtubeapidata2 created");
 //   }
 // });

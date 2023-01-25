@@ -10,3 +10,4 @@ This repository contains the Backend Assignment of Youtube API, Database Integra
 4. Instead of using OFFSET we can find a smarter approach (use estimates such as WHERE clause, etc.) to avoid scanning all rows in OFFSET.
 5. Create Layered DockerFile so that the file size of Docker Image is lower.
 6. For DX: Use Docker Volumes so the Developer's Codebase is in sync with the Container Codebase.
+7. We could also use ORMs, Sequalize and Moment.js (too heavy) for faster Development.

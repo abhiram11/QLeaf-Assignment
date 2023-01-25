@@ -16,6 +16,7 @@ app.use(cors()); // for frontend integration
 app.get("/", (req, res) => res.status(200).send("Hello woorld from backend!"));
 
 // Get all video data from the Database, paginated and in Descending Order (Latest first).
+// Without page, get first 100 rows
 app.get("/vids", async (req, res) => {
   try {
     await pool
@@ -30,6 +31,7 @@ app.get("/vids", async (req, res) => {
   }
 });
 
+// Get paginated results of 20 results each, where page=1 shows the latest enteies in the database
 app.get("/vids/:page", async (req, res) => {
   const { page } = req.params;
   const pageSize = 20;
@@ -45,6 +47,7 @@ app.get("/vids/:page", async (req, res) => {
         res.status(200).send(JSON.stringify(data.rows));
       });
   } catch (err) {
+    res.status(500).send(err.message);
     console.error(err.message);
   }
 });
@@ -62,14 +65,16 @@ app.get("/search/:search", async (req, res) => {
       )
       .then((data) => res.status(200).send(JSON.stringify(data.rows)));
   } catch (err) {
+    res.status(500).send(err.message);
     console.error(err.message);
   }
 });
 
+// Calls YoutubeAPI with required parameters, the time window is from [1 minute before, NOW]
 async function callYoutubeApi() {
   var date = new Date();
   var beforeDate = date;
-  beforeDate = beforeDate.toISOString();
+  beforeDate = beforeDate.toISOString(); // the microseconds have to be removed for query eligibility
   beforeDate =
     beforeDate.slice(0, -5) + beforeDate.slice(-1, beforeDate.length);
   date.setMinutes(date.getMinutes() - 1);
@@ -83,8 +88,6 @@ async function callYoutubeApi() {
     )
     .then((res) => {
       let items = res?.data?.items;
-      // console.log("items:", items);
-      // console.log("Inserting item into DB");
       if (items) {
         items.forEach(async (item) => {
           console.log(
@@ -113,7 +116,7 @@ async function callYoutubeApi() {
     })
     //   .then((res) => console.log(JSON.stringify(res.data)))
     .catch((err) => {
-      console.log("Error: ", err.message);
+      console.log("Error in Axios: ", err.message);
     });
 }
 
