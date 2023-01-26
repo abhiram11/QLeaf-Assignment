@@ -1,0 +1,12 @@
+.dashboard {
+}
+
+.dashboard__video {
+  cursor: pointer;
+  padding: 10px;
+}
+
+.dashboard__video:hover {
+  border: 1px solid gray;
+  border-radius: 4px;
+}

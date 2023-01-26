@@ -1,0 +1,14 @@
+.searchvideo {
+  display: grid;
+  place-items: center;
+}
+
+.searchvideo__result {
+  cursor: pointer;
+  padding: 10px;
+}
+
+.searchvideo__result:hover {
+  border: 1px solid gray;
+  border-radius: 4px;
+}
