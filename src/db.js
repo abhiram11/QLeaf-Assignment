@@ -13,20 +13,32 @@ module.exports = pool;
 
 // const { Client } = require("pg");
 
-// const client = new Client({
-//   //   host: "127.0.0.1",
-//   user: "postgres",
-//   password: "1234",
-//   port: 5432,
-// });
+// const createDatabase = async (dbname) => {
+//   const client = new Client({
+//     //   host: "127.0.0.1",
+//     user: "postgres",
+//     password: "1234",
+//     port: 5432,
+//   });
 
-// const createDatabase = async () => {
 //   try {
 //     await client.connect(); // gets connection
-//     await client.query("CREATE DATABASE youtubeapidata2"); // sends queries
+//     await client.query(`CREATE DATABASE ${dbname}`); // sends queries
+//     console.log("Database created");
+//     await client.query(`
+//     CREATE TABLE ytdata(
+//       id SERIAL PRIMARY KEY,
+//       video_id VARCHAR(12) NOT NULL,
+//       title VARCHAR(255) NOT NULL,
+//       description VARCHAR(255),
+//       published_at TIMESTAMP NOT NULL,
+//       thumbnails_url VARCHAR(255) NOT NULL
+//   );
+//   `);
+//     console.log("Table created");
 //     return true;
 //   } catch (error) {
-//     console.log("Database youtubeapidata2 already created");
+//     console.log(`Database ${dbname} already created`);
 //     return false;
 //   } finally {
 //     await client.end(); // closes connection
@@ -35,6 +47,8 @@ module.exports = pool;
 
 // createDatabase().then((result) => {
 //   if (result) {
-//     console.log("Database youtubeapidata2 created");
+//     console.log("Database and Table created");
 //   }
 // });
+
+// module.exports = { pool , createDatabase };

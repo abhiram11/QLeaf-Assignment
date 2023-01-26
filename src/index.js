@@ -3,8 +3,13 @@ const app = express();
 const axios = require("axios");
 require("dotenv").config();
 const cors = require("cors");
-const pool = require("./db"); // use sequelize as well
+const { pool } = require("./db"); // use sequelize as well
 const PORT = 3001;
+
+// Creating the Database, check if DB already exists
+// createDatabase("youtubeapidata9");
+// pool.options.database = "youtubeapidata9";
+// console.log("Pool:", pool.options);
 
 // middleware
 app.use(cors()); // for frontend integration
@@ -116,14 +121,11 @@ async function callYoutubeApi() {
     })
     //   .then((res) => console.log(JSON.stringify(res.data)))
     .catch((err) => {
-      console.log(
-        "Error in Axios, Most probably Quota Exceeded: ",
-        err.message
-      );
+      console.log("Error in Axios, (403 = Quota Exceeded): ", err.message);
     });
 }
 
-callYoutubeApi();
-setInterval(callYoutubeApi, 60000); //calling every 60 seconds
+// callYoutubeApi();
+// setInterval(callYoutubeApi, 60000); //calling every 60 seconds
 
 app.listen(PORT, () => console.log(`listening to port:${PORT}`));

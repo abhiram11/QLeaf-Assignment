@@ -42,7 +42,7 @@ build/Release
 node_modules/
 jspm_packages/
 
-client/node_modules
+
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
@@ -132,7 +132,6 @@ dist
 .pnp.*
 
 # client
-
 client/dependencies
 client/node_modules
 client/.pnp
@@ -155,3 +154,29 @@ client/npm-debug.log*
 client/yarn-debug.log*
 client/yarn-error.log*
 client/node_modules
+
+
+
+# client2
+client2/dependencies
+client2/node_modules
+client2/.pnp
+client2/.pnp.js
+
+# testing
+client2//coverage
+
+# production
+client2//build
+
+# misc
+client2/.DS_Store
+client2/.env.local
+client2/.env.development.local
+client2/.env.test.local
+client2/.env.production.local
+
+client2/npm-debug.log*
+client2/yarn-debug.log*
+client2/yarn-error.log*
+client2/node_modules
