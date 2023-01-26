@@ -3,7 +3,7 @@ const app = express();
 const axios = require("axios");
 require("dotenv").config();
 const cors = require("cors");
-const { pool } = require("./db"); // use sequelize as well
+const pool = require("./db"); // use sequelize as well
 const PORT = 3001;
 
 // Creating the Database, check if DB already exists
